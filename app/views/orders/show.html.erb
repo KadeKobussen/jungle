@@ -20,13 +20,13 @@
       <% end %>
       <tr>
         <td colspan="3"><strong>Total:</strong></td>
-        <td><%= number_to_currency(@order.total_price) %></td>
+        <td><%= number_to_currency(@order.total_cents * 0.01) %></td>
       </tr>
     </tbody>
   </table>
   
   <p><strong>Email:</strong> <%= @order.email %></p>
-  
+
   <div class="order-summary jumbotron">
     <h4>Thank you for your order!</h4>
   </div>
