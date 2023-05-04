@@ -3,7 +3,30 @@
   <header class="page-header">
     <h1>Order #<%= @order.id %></h1>
   </header>
+  <h2>Order Details</h2>
 
+  <table class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Name</th>
+        <th>Quantity</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @order.line_items.each do |line_item| %>
+        <%= render partial: 'line_item', locals: { line_item: line_item } %>
+      <% end %>
+      <tr>
+        <td colspan="3"><strong>Total:</strong></td>
+        <td><%= number_to_currency(@order.total_price) %></td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <p><strong>Email:</strong> <%= @order.email %></p>
+  
   <div class="order-summary jumbotron">
     <h4>Thank you for your order!</h4>
   </div>

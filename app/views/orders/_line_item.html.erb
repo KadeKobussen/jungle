@@ -1,0 +1,6 @@
+<tr>
+  <td><%= image_tag(line_item.product.image_url, alt: line_item.product.name, class: "img-thumbnail") %></td>
+  <td><%= line_item.product.name %><br><small><%= line_item.product.description %></small></td>
+  <td><%= line_item.quantity %></td>
+  <td><%= number_to_currency(line_item.total_price) %></td>
+</tr>
