@@ -14,3 +14,4 @@ describe('Visit home page', () => {
     cy.get(".products article").should("have.length", 12);
   });
 })
+
