@@ -72,5 +72,23 @@ RSpec.describe User, type: :model do
       )
       @user.save
     end
+
+    it 'returns the correct user object for a valid email and password combination' do
+      expect(User.authenticate_with_credentials('test@test.com', 'password')).to eq(@user)
+    end
+
+    it 'returns nil for an invalid email and password combination' do
+      expect(User.authenticate_with_credentials('test@example.com', 'wrongpassword')).to be_nil
+    end
+
+    it 'authenticates successfully with leading/trailing white spaces in email' do
+      expect(User.authenticate_with_credentials(' test@test.com ', 'password')).to eq(@user)
+    end
+
+    it 'authenticates successfully with wrong case in email' do
+      expect(User.authenticate_with_credentials('tEst@teSt.com', 'password')).to eq(@user)
+    end
+
+
   end
 end
