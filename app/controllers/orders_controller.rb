@@ -1,12 +1,15 @@
 class OrdersController < ApplicationController
+  before_action :set_email, only: [:create]
 
   def show
     @order = Order.find(params[:id])
+    @stripe_email = session[:stripe_email]
   end
 
   def create
     charge = perform_stripe_charge
-    order  = create_order(charge)
+    order = create_order(charge)
+    session[:stripe_email] = params[:stripeEmail]
 
     if order.valid?
       empty_cart!
@@ -26,12 +29,20 @@ class OrdersController < ApplicationController
     update_cart({})
   end
 
+  def set_email
+    if current_user
+      params[:stripeEmail] = current_user.email
+    else
+      params[:stripeEmail] = '' # Set an empty string for visitors
+    end
+  end
+
   def perform_stripe_charge
     Stripe::Charge.create(
-      source:      params[:stripeToken],
-      amount:      cart_subtotal_cents,
-      description: "Khurram Virani's Jungle Order",
-      currency:    'cad'
+      source: params[:stripeToken],
+      amount: cart_subtotal_cents,
+      description: "#{current_user&.first_name} #{current_user&.last_name}'s Jungle Order",
+      currency: 'cad'
     )
   end
 
@@ -39,9 +50,9 @@ class OrdersController < ApplicationController
     order = Order.new(
       email: params[:stripeEmail],
       total_cents: cart_subtotal_cents,
-      stripe_charge_id: stripe_charge.id, # returned by stripe
+      stripe_charge_id: stripe_charge.id
     )
-
+  
     enhanced_cart.each do |entry|
       product = entry[:product]
       quantity = entry[:quantity]
@@ -52,8 +63,9 @@ class OrdersController < ApplicationController
         total_price: product.price * quantity
       )
     end
+  
     order.save!
     order
   end
-
-end
+  
+end  
